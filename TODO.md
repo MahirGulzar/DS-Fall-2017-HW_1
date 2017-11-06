@@ -1,6 +1,6 @@
 # TO-DO List for homework
 
--[]Make a GUI for sudoko use: http://newcoder.io/gui/part-1/
+-[*]Make a GUI for sudoko use: http://newcoder.io/gui/part-1/
 -[]Make login for users
 -[]Making sudoku logic accordin to the requirements
 -[]Start by creating 1 sudoku session
