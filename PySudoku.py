@@ -10,16 +10,20 @@ import Common
 
 
 
-def getSudoku(puzzleNumber=None):
+def getSudoku(grid,puzzleNumber=None):
     """This function defines the solution and the inital view.
     Returns two lists of lists, inital first then solution."""
     inital = SudokuGrid.SudokuGrid()
     current = SudokuGrid.SudokuGrid()
     solution = SudokuGrid.SudokuGrid()
     
-    inital.createGrid(27, puzzleNumber)
-    current.createGrid(27, puzzleNumber)
-    solution.createGrid(81, puzzleNumber)
+    #inital.createGrid(27, puzzleNumber)
+    #current.createGrid(27, puzzleNumber)
+
+    current.set_Grid(grid)
+    inital.set_Grid(grid)
+    solution.set_Grid(grid)
+    #solution.createGrid(81, puzzleNumber)
 
 
 
@@ -27,7 +31,7 @@ def getSudoku(puzzleNumber=None):
 
 
 
-def main():
+def main(server_grid):
     pygame.init()
 
     size = width, height = 400, 500
@@ -50,7 +54,7 @@ def main():
     # input for a duplicatable puzzle.
     puzzleNumber = int(random.random() * 20000) + 1
     pygame.display.set_caption("Sudoku  -  Puzzle ")
-    inital, current, solution = getSudoku(puzzleNumber)
+    inital, current, solution = getSudoku(grid,puzzleNumber)
 
     theSquares = []
     initXLoc = 10
@@ -117,17 +121,40 @@ def Establish_Connection():
     s = socket.socket()
     #host = '127.0.0.1'
     host =socket.gethostname()
-    print(host)
-    port = 12345
-    try:
-        s.connect((host,port))
-        for i in range(81):
-            resp = s.recv(1024)
-            print(resp)
+    grid= []
+    li=[]
 
-        return True
-    except:
-        return False
+    print(host)
+    port = 12346
+
+    s.connect((host,port))
+
+    resp = s.recv(1024)
+    #print(resp)
+    string_grid=resp.split(',')
+    for element in string_grid:
+
+        print(element.strip())
+        element=element.strip()
+        if (element.strip() == 'None'):
+            li.append(None)
+        elif(len(element.strip())>0):
+            li.append(int(element))
+            #li.append(1)
+
+        if(len(li)==9):
+            grid.append(list(li))
+            li=[]
+
+    print(grid)
+
+
+
+    return grid
+
+
+
+
 
     s.shutdown(socket.SHUT_WR)
     s.close()
@@ -135,7 +162,8 @@ def Establish_Connection():
 if __name__ == "__main__":
 
     #main()
-    if(Establish_Connection()):
-        main()
+    grid=Establish_Connection()
+    if(len(grid)>0):
+        main(grid)
 
     sys.exit()

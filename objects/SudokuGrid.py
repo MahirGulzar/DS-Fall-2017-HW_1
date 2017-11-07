@@ -122,6 +122,9 @@ class SudokuGrid:
 
     def get_Grid(self):
         return self.grid
+
+    def set_Grid(self,grid):
+        self.grid=grid
         
 
 if __name__ == "__main__":

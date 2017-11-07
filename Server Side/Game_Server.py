@@ -21,15 +21,15 @@ def getSudoku(puzzleNumber=None):
     return inital, current, solution
 
 
-puzzleNumber = int(random.random() * 20000) + 1
-inital, current, solution = getSudoku(puzzleNumber)
+
 
 # socket creation, binding and listening
 s = socket.socket()
 host = socket.gethostname()
-port = 12345
+port = 12346
 s.bind((host, port))
 s.listen(5)
+
 
 random_counter = 0  #for creating new files on different client request.
 
@@ -40,18 +40,24 @@ while True:
 
 
     c, addr = s.accept()     # Establish connection with client.
-
+    puzzleNumber = int(random.random() * 20000) + 1
+    inital, current, solution = getSudoku(puzzleNumber)
     random_counter+=1
     print 'Connection received from ', addr
     # # if l==Common.NewConnection:
     print "Generating New game Session.."
     print "\nRecieved Connection and registered.. ", addr
     i=0
+    send_grid=''
     for row in current.get_Grid():
         for col in row:
-            c.send(str(col))
+            send_grid=send_grid+','+str(col)
+            #c.send(str(col))
             print(i)
             i+=1
+
+    print(send_grid)
+    c.send(send_grid)
     c.close()
 
     print("yes...")
