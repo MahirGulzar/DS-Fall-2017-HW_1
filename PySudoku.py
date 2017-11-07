@@ -21,6 +21,8 @@ def getSudoku(puzzleNumber=None):
     current.createGrid(27, puzzleNumber)
     solution.createGrid(81, puzzleNumber)
 
+
+
     return inital, current, solution
 
 
@@ -119,8 +121,10 @@ def Establish_Connection():
     port = 12345
     try:
         s.connect((host,port))
-        resp = s.recv(1024)
-        print(resp)
+        for i in range(81):
+            resp = s.recv(1024)
+            print(resp)
+
         return True
     except:
         return False

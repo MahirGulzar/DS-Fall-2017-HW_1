@@ -111,6 +111,7 @@ class SudokuGrid:
                     # self.printGrid()
             # else:
                 # self.printGrid()
+        #self.printGrid()
     
     def checkSolution(self, solution):
         for row in range(9):
@@ -118,6 +119,9 @@ class SudokuGrid:
                 if not solution.getNum(row, col) == self.getNum(row, col):
                     return False
         return True
+
+    def get_Grid(self):
+        return self.grid
         
 
 if __name__ == "__main__":
