@@ -1,8 +1,14 @@
-import sys, os, random, pygame
+# Imports.....
+
+import sys, os, random, pygame  # Using 3rd Party pygame library
 sys.path.append(os.path.join("objects"))
 import SudokuSquare
 import SudokuGrid
 from GameResources import *
+import socket
+import Common
+
+
 
 def getSudoku(puzzleNumber=None):
     """This function defines the solution and the inital view.
@@ -16,23 +22,7 @@ def getSudoku(puzzleNumber=None):
     solution.createGrid(81, puzzleNumber)
 
     return inital, current, solution
-    
-    # Old Version
-    # ===========
-    # theFile = open(os.path.join("data", "sudokusample.xml"), "r")
-    # theData = theFile.read()
-    # theFile.close()
-    # 
-    # inital = []
-    # theLines = theData.split("\n")
-    # for line in theLines:
-    #   inital.append(line.split())
-    # inital.pop()
-    # 
-    # print inital
-    # 
-    # solution = inital[:]
-    # return inital, solution
+
 
 
 def main():
@@ -48,8 +38,8 @@ def main():
     board, boardRect = load_image("SudokuBg.png")
     boardRect = boardRect.move(10, 80)
 
-    logo, logoRect = load_image("PySudoku.png")
-    logoRect = logoRect.move(40, 0)
+    # logo, logoRect = load_image("PySudoku.png")
+    # logoRect = logoRect.move(40, 0)
 
     clock = pygame.time.Clock()
 
@@ -57,7 +47,7 @@ def main():
     # a random number to fill in here or accept user
     # input for a duplicatable puzzle.
     puzzleNumber = int(random.random() * 20000) + 1
-    pygame.display.set_caption("PySudoku  -  Puzzle #" + str(puzzleNumber))    
+    pygame.display.set_caption("Sudoku  -  Puzzle ")
     inital, current, solution = getSudoku(puzzleNumber)
 
     theSquares = []
@@ -84,10 +74,10 @@ def main():
 
     screen.blit(background, (0, 0))
     screen.blit(board, boardRect)
-    screen.blit(logo, logoRect)
+    #screen.blit(logo, logoRect)
     pygame.display.flip()
 
-    load_music("PySudokuTheme1.ogg")
+    # load_music("PySudokuTheme1.ogg")
 
     theNumbers = { pygame.K_0 : "0", pygame.K_1 : "1", pygame.K_2 : "2", 
                  pygame.K_3 : "3", pygame.K_4 : "4", pygame.K_5 : "5", 
@@ -121,6 +111,27 @@ def main():
         clock.tick(60)
 
 
+def Establish_Connection():
+    s = socket.socket()
+    #host = '127.0.0.1'
+    host =socket.gethostname()
+    print(host)
+    port = 12345
+    try:
+        s.connect((host,port))
+        resp = s.recv(1024)
+        print(resp)
+        return True
+    except:
+        return False
+
+    s.shutdown(socket.SHUT_WR)
+    s.close()
+
 if __name__ == "__main__":
-    main()
+
+    #main()
+    if(Establish_Connection()):
+        main()
+
     sys.exit()
