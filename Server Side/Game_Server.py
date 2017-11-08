@@ -8,8 +8,8 @@ from objects import GameResources
 
 
 def getSudoku(puzzleNumber=None):
-    """This function defines the solution and the inital view.
-    Returns two lists of lists, inital first then solution."""
+    # """This function defines the solution and the inital view.
+    # Returns two lists of lists, inital first then solution."""
     inital = SudokuGrid.SudokuGrid()
     current = SudokuGrid.SudokuGrid()
     solution = SudokuGrid.SudokuGrid()
@@ -31,7 +31,6 @@ s.bind((host, port))
 s.listen(5)
 
 
-random_counter = 0  #for creating new files on different client request.
 
 # Endless loop for client reception
 while True:
@@ -42,9 +41,7 @@ while True:
     c, addr = s.accept()     # Establish connection with client.
     puzzleNumber = int(random.random() * 20000) + 1
     inital, current, solution = getSudoku(puzzleNumber)
-    random_counter+=1
     print 'Connection received from ', addr
-    # # if l==Common.NewConnection:
     print "Generating New game Session.."
     print "\nRecieved Connection and registered.. ", addr
     i=0
