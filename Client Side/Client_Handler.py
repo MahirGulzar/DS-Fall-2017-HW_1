@@ -18,8 +18,8 @@ background = background.convert()
 background.fill((255, 255, 255))
 board, boardRect = load_image("SudokuBg.png")
 boardRect = boardRect.move(10, 80)
-s = socket.socket()
-host = socket.gethostname()
+# s = socket.socket()
+# host = socket.gethostname()
 
 
 class Handler:
@@ -43,16 +43,12 @@ class Handler:
 
         return current
 
-    def Initial_Reception(self,s):
+    def Initial_Reception(self,self_grid,name,s):
 
-
-
-        print("Awaiting Server Request/...")
-
-        resp = s.recv(1024)
+        print(".....")
         grid = []
         li = []
-        string_grid = resp.split(',')
+        string_grid = self_grid.split(',')
         for element in string_grid:
 
             #print(element.strip())
@@ -70,11 +66,14 @@ class Handler:
         global MainGrid
         MainGrid = grid
 
-        Start(MainGrid)
+        Start(MainGrid,name,s)
 
-    def Send_Key_Update(self):
+    def Send_Key_Update(self,x,y,number,s):
 
-        s.sen
+        coordinate='u:'+str(x)+','+str(y)+','+str(number)
+        s.sendall(coordinate)
+        # grid = s.recv(1024)
+        # print(grid)
 
 
 
@@ -121,7 +120,7 @@ def Refresh_Display(current):
                   pygame.K_9: "9", pygame.K_SPACE: "", pygame.K_BACKSPACE: "",
                   pygame.K_DELETE: ""}
 
-def Start(grid):
+def Start(grid,name,s):
     global background
     global screen
     global size
@@ -155,7 +154,7 @@ def Start(grid):
     screen.blit(board, boardRect)
     # screen.blit(logo, logoRect)
     pygame.display.flip()
-
+    pygame.display.set_caption(name)
     # load_music("PySudokuTheme1.ogg")
 
     theNumbers = {pygame.K_0: "0", pygame.K_1: "1", pygame.K_2: "2",
@@ -183,7 +182,8 @@ def Start(grid):
                 print "[ %s, %s ]" % currentHighlight.currentLoc()
                 xLoc, yLoc = currentHighlight.currentLoc()
                 handle.Modify_Grid(yLoc, xLoc, theNumbers[event.key])
-                # current.setNum(yLoc, xLoc, theNumbers[event.key])
+                handle.Send_Key_Update(yLoc, xLoc, theNumbers[event.key],s)
+                current.setNum(yLoc, xLoc, theNumbers[event.key])
                 # current.printGrid()
 
         for num in theSquares:
@@ -191,8 +191,8 @@ def Start(grid):
         pygame.display.flip()
         # clock.tick(60)
 
-def Establish_Connection(port,handle):
-
-    s.connect((host, port))
-    #s.bind()
-    handle.Initial_Reception(s)
+# def Establish_Connection(port,handle):
+#
+#     #s.connect((host, port))
+#     #s.bind()
+#     #handle.Initial_Reception(s)

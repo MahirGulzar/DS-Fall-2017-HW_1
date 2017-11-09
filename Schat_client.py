@@ -39,7 +39,7 @@ while True:
                     sys.exit(2)
                 else:
                     sys.stdout.write(msg.decode())
-                    if 'Please tell us your name' in msg.decode():
+                    if 'Listing current rooms' in msg.decode() or 'Oops' in msg.decode():
                         msg_prefix = 'name: ' # identifier for name
                     else:
                         msg_prefix = ''

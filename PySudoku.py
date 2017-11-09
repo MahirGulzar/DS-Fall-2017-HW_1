@@ -1,3 +1,4 @@
+from __future__ import print_function
 # Imports.....
 
 import sys, os, random, pygame  # Using 3rd Party pygame library
@@ -134,12 +135,89 @@ import Client_Handler
 
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
+#
+#     # Main Gui of game by Frozan here...
+#     handle=Handler()
+#     Client_Handler.Establish_Connection(12345,handle)
+#     # if(len(Client_Handler.MainGrid)>0):
+#     #     Start(Client_Handler.MainGrid,handle)
+#
+#     sys.exit()
 
-    # Main Gui of game by Frozan here...
-    handle=Handler()
-    Client_Handler.Establish_Connection(12346,handle)
-    # if(len(Client_Handler.MainGrid)>0):
-    #     Start(Client_Handler.MainGrid,handle)
 
-    sys.exit()
+#-----------------------------------------------------------------
+
+
+
+import Client_Handler
+import select, socket, sys
+from pychat_util import Room, Hall, Player
+import pychat_util
+import threading
+
+
+print("hi")
+
+READ_BUFFER = 4096
+'''
+if len(sys.argv) < 2:
+    print("Usage: Python3 client.py [hostname]", file = sys.stderr)
+    sys.exit(1)
+else:
+'''
+server_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+#server_connection.connect((sys.argv[1], pychat_util.PORT))
+server_connection.connect(('127.0.0.1', pychat_util.PORT))
+
+def prompt():
+    print('>', end=" ")
+
+print ("Connected to server\n")
+msg_prefix = ''
+
+socket_list = [sys.stdin, server_connection]
+# names=[]
+# names.append('Mahir')
+# names.append('')
+name='Mahir'
+while True:
+    read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
+    for s in read_sockets:
+        if s is server_connection: # incoming message
+            msg = s.recv(READ_BUFFER)
+            if not msg:
+                print ("Server down!")
+                sys.exit(2)
+            else:
+                if msg == pychat_util.QUIT_STRING.encode():
+                    sys.stdout.write('Bye\n')
+                    sys.exit(2)
+                else:
+                    sys.stdout.write(msg.decode())
+                    if 'Listing current rooms' in msg.decode():
+                        msg_prefix = 'name: '+name  # identifier for session list
+                        server_connection.sendall(msg_prefix.encode())
+                        continue
+                        # msg_prefix = 'session:'  # identifier for session list
+
+                    elif 'Oops' in msg.decode():
+                        msg_prefix = 'name: ' + name  # identifier for session list
+                        server_connection.sendall(msg_prefix.encode())
+                        continue
+                        #msg_prefix = 'session:'  # identifier for new session
+                    elif 'welcomes' in msg.decode():
+                        grid=msg.replace("welcomes: ", "")
+                        handle = Client_Handler.Handler()
+                        handle.Initial_Reception(grid,name,s)
+                        #threading.Thread(target=handle.Initial_Reception,args=(grid,name))
+                    elif 'selection' in msg.decode():
+                        msg_prefix = 'session:'  # identifier for new session
+                    else:
+                        msg_prefix = ''
+                    prompt()
+
+        else:
+            msg = msg_prefix + sys.stdin.readline()
+            server_connection.sendall(msg.encode())
