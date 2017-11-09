@@ -1,21 +1,26 @@
+from __future__ import print_function
 import select, socket, sys
 from pychat_util import Room, Hall, Player
 import pychat_util
 
-READ_BUFFER = 4096
 
+print("hi")
+
+READ_BUFFER = 4096
+'''
 if len(sys.argv) < 2:
     print("Usage: Python3 client.py [hostname]", file = sys.stderr)
     sys.exit(1)
 else:
-    server_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    server_connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    server_connection.connect((sys.argv[1], pychat_util.PORT))
+'''
+server_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+server_connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+server_connection.connect((sys.argv[1], pychat_util.PORT))
 
 def prompt():
-    print('>', end=' ', flush = True)
+    print('>', end=" ")
 
-print("Connected to server\n")
+print ("Connected to server\n")
 msg_prefix = ''
 
 socket_list = [sys.stdin, server_connection]
@@ -26,7 +31,7 @@ while True:
         if s is server_connection: # incoming message 
             msg = s.recv(READ_BUFFER)
             if not msg:
-                print("Server down!")
+                print ("Server down!")
                 sys.exit(2)
             else:
                 if msg == pychat_util.QUIT_STRING.encode():
