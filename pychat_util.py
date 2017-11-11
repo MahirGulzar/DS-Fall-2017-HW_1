@@ -132,18 +132,21 @@ class Hall:
             print(coordinate_list_int[2])
 
             for room in self.rooms:
-                for player in self.rooms[room].players:
-                    self.rooms[room].gameObject.setNum(coordinate_list_int[0], coordinate_list_int[1], coordinate_list_int[2])
-                    self.rooms[room].broadcast_grid()
-                    print(len(self.rooms[room].players))
-                    print('previous was len')
-                    break
+                for newplayer in self.rooms[room].players:
+                    if(player is newplayer):
+                        self.rooms[room].gameObject.setNum(coordinate_list_int[0], coordinate_list_int[1], coordinate_list_int[2])
+                        self.rooms[room].broadcast_grid()
+                        print(len(self.rooms[room].players))
+                        print('previous was len')
+                        break
 
         elif "refresh:" in msg:
             for room in self.rooms:
-                for player in self.rooms[room].players:
-                    print('broadcasting now..')
-                    self.rooms[room].broadcast_grid()
+                for newplayer in self.rooms[room].players:
+                    if (player is newplayer):
+                        print('broadcasting now..')
+                        self.rooms[room].broadcast_grid()
+                        break
 
 
         else:

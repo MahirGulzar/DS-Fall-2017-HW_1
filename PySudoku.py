@@ -248,7 +248,7 @@ socket_list = [sys.stdin, server_connection]
 # names=[]
 # names.append('Mahir')
 # names.append('')
-name='mahir2'
+name='prabhant2'
 while True:
     read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
     for s in read_sockets:
