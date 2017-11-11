@@ -4,9 +4,11 @@
 import socket, pdb
 import future_builtins
 import future
+
 MAX_CLIENTS = 30
-PORT = 22222
+PORT = 12345
 QUIT_STRING = '<$quit$>'
+NEW_SESSION = '<new>'
 
 import Common
 import random
@@ -44,16 +46,17 @@ class Hall:
         self.room_player_map = {} # {playerName: roomName}
 
     def welcome_new(self, new_player):
-        new_player.socket.sendall(b'Welcome to pychat.\nPlease tell us your name:\n')
+        #new_player.socket.sendall(b'Welcome to pychat.\nPlease tell us your name:\n')
+        self.list_rooms(new_player)
 
     def list_rooms(self, player):
         
         if len(self.rooms) == 0:
             msg = 'Oops, no active rooms currently. Create your own!\n' \
-                + 'Use [<join> room_name] to create a room.\n'
+                + 'Write room name..\n'
             player.socket.sendall(msg.encode())
         else:
-            msg = 'Listing current rooms...\n'
+            msg = 'Listing current rooms choose a room as number ...\n'
             for room in self.rooms:
                 msg += room + ": " + str(len(self.rooms[room].players)) + " player(s)\n"
             player.socket.sendall(msg.encode())
@@ -73,9 +76,9 @@ class Hall:
             name = msg.split()[1]
             player.name = name
             print "New connection from:", player.name
-            player.socket.sendall(instructions)
+            player.socket.sendall('selection')
 
-        elif "<join>" in msg:
+        elif "session:" in msg:
             same_room = False
             if len(msg.split()) >= 2: # error check
                 room_name = msg.split()[1]
@@ -94,6 +97,7 @@ class Hall:
                     self.rooms[room_name].welcome_new(player)
 
                     self.room_player_map[player.name] = room_name
+                    #player.socket.sendall(self.r)
             else:
                 player.socket.sendall(instructions)
 
@@ -106,6 +110,41 @@ class Hall:
         elif "<quit>" in msg:
             player.socket.sendall(QUIT_STRING.encode())
             self.remove_player(player)
+
+        elif "u:" in msg:
+            # player.socket.sendall(QUIT_STRING.encode())
+            # self.remove_player(player)
+            coordinate_string = msg.replace("u:", "")
+            coordinate_string2=coordinate_string.replace(","," ")
+            print(coordinate_string2)
+            #coordinate_string =','+coordinate_string
+            print(coordinate_string)
+            #coordinate_list = coordinate_string.split('')
+            # print(coordinate_string2.split()[0])
+            # print(coordinate_string2.split()[1])
+            # print(coordinate_string2.split()[2])
+            coordinate_list_int=[]
+            coordinate_list_int.append(int(coordinate_string2.split()[0]))
+            coordinate_list_int.append(int(coordinate_string2.split()[1]))
+            coordinate_list_int.append(int(coordinate_string2.split()[2]))
+            print(coordinate_list_int[0])
+            print(coordinate_list_int[1])
+            print(coordinate_list_int[2])
+
+            for room in self.rooms:
+                for player in self.rooms[room].players:
+                    self.rooms[room].gameObject.setNum(coordinate_list_int[0], coordinate_list_int[1], coordinate_list_int[2])
+                    self.rooms[room].broadcast_grid()
+                    print(len(self.rooms[room].players))
+                    print('previous was len')
+                    break
+
+        elif "refresh:" in msg:
+            for room in self.rooms:
+                for player in self.rooms[room].players:
+                    print('broadcasting now..')
+                    self.rooms[room].broadcast_grid()
+
 
         else:
             # check if in a room or not first
@@ -129,11 +168,38 @@ class Room:
         self.players = [] # a list of sockets
         self.name = name
 
+        initial,current,solution = getSudoku()
+        self.gameObject = current
+        self.grid = current.get_Grid()
+
     def welcome_new(self, from_player):
-        msg = self.name + " welcomes: " + from_player.name + '\n'
+        i=0
+        send_grid=''
+        for row in self.grid:
+            for col in row:
+                send_grid=send_grid+','+str(col)
+                #c.send(str(col))
+                print(i)
+                i+=1
+        msg = "welcomes: " + send_grid
+        #print(msg)
         for player in self.players:
             player.socket.sendall(msg.encode())
 
+    def broadcast_grid(self):
+        i = 0
+        send_grid = ''
+        for row in self.grid:
+            for col in row:
+                send_grid = send_grid + ',' + str(col)
+                # c.send(str(col))
+                #print(i)
+                i += 1
+        msg = "grid: " + send_grid
+        print(msg)
+        # print(msg)
+        for player in self.players:
+            player.socket.sendall(msg)
 
     def broadcast(self, from_player, msg):
         msg = from_player.name.encode() + b":" + msg
