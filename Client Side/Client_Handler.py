@@ -9,7 +9,9 @@ import Buffer_Handler
 
 
 current=None
+inroom=False
 MainGrid=[]
+theSquares = []
 pygame.init()
 size = width, height = 400, 500
 screen = pygame.display.set_mode(size)
@@ -83,42 +85,34 @@ class Handler:
 
 
 
-def Refresh_Display(current):
+# def Refresh_Display():
     # handle = Handler()
-    theSquares = []
-    initXLoc = 10
-    initYLoc = 80
-    startX, startY, editable, number = 0, 0, "N", 0
-    for y in range(9):
-        for x in range(9):
-            if x in (0, 1, 2):  startX = (x * 41) + (initXLoc + 2)
-            if x in (3, 4, 5):  startX = (x * 41) + (initXLoc + 6)
-            if x in (6, 7, 8):  startX = (x * 41) + (initXLoc + 10)
-            if y in (0, 1, 2):  startY = (y * 41) + (initYLoc + 2)
-            if y in (3, 4, 5):  startY = (y * 41) + (initYLoc + 6)
-            if y in (6, 7, 8):  startY = (y * 41) + (initYLoc + 10)
-            number = current.getNum(y, x)
-            if number != None:
-                editable = "N"
-            else:
-                editable = "Y"
-            theSquares.append(SudokuSquare.SudokuSquare(number, startX, startY, editable, x, y))
+    #
+    # theSquares = []
+    # initXLoc = 10
+    # initYLoc = 80
+    # startX, startY, editable, number = 0, 0, "N", 0
+    # for y in range(9):
+    #     for x in range(9):
+    #         if x in (0, 1, 2):  startX = (x * 41) + (initXLoc + 2)
+    #         if x in (3, 4, 5):  startX = (x * 41) + (initXLoc + 6)
+    #         if x in (6, 7, 8):  startX = (x * 41) + (initXLoc + 10)
+    #         if y in (0, 1, 2):  startY = (y * 41) + (initYLoc + 2)
+    #         if y in (3, 4, 5):  startY = (y * 41) + (initYLoc + 6)
+    #         if y in (6, 7, 8):  startY = (y * 41) + (initYLoc + 10)
+    #         number = handle.Update_Grid(MainGrid).getNum(y, x)
+    #         if number != None:
+    #             editable = "N"
+    #         else:
+    #             editable = "Y"
+    #         theSquares.append(SudokuSquare.SudokuSquare(number, startX, startY, editable, x, y))
+    #
+    # # for num in theSquares:
+    # #     num.draw()
+    #
+    # print(current.get_Grid())
 
-    currentHighlight = theSquares[0]
-    currentHighlight.highlight()
 
-    screen.blit(background, (0, 0))
-    screen.blit(board, boardRect)
-    # screen.blit(logo, logoRect)
-    pygame.display.flip()
-
-    # load_music("PySudokuTheme1.ogg")
-
-    theNumbers = {pygame.K_0: "0", pygame.K_1: "1", pygame.K_2: "2",
-                  pygame.K_3: "3", pygame.K_4: "4", pygame.K_5: "5",
-                  pygame.K_6: "6", pygame.K_7: "7", pygame.K_8: "8",
-                  pygame.K_9: "9", pygame.K_SPACE: "", pygame.K_BACKSPACE: "",
-                  pygame.K_DELETE: ""}
 
 def Start(grid,name,s):
     global background
@@ -126,9 +120,13 @@ def Start(grid,name,s):
     global size
     global board
     global boardRect
+    global theSquares
+    #global current
 
+    #current = SudokuSquare()
     handle = Handler()
-    theSquares = []
+
+    # theSquares = []
     initXLoc = 10
     initYLoc = 80
     startX, startY, editable, number = 0, 0, "N", 0
@@ -163,8 +161,12 @@ def Start(grid,name,s):
                   pygame.K_9: "9", pygame.K_SPACE: "", pygame.K_BACKSPACE: "",
                   pygame.K_DELETE: ""}
 
+    print('Before while..')
     while 1:
         # Refresh_Display(Client_Handler.current)
+        #Refresh_Display()
+
+        #pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return 0
@@ -189,6 +191,7 @@ def Start(grid,name,s):
         for num in theSquares:
             num.draw()
         pygame.display.flip()
+    print('After while..')
         # clock.tick(60)
 
 # def Establish_Connection(port,handle):

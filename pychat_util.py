@@ -115,17 +115,35 @@ class Hall:
             # player.socket.sendall(QUIT_STRING.encode())
             # self.remove_player(player)
             coordinate_string = msg.replace("u:", "")
-            coordinate_list = coordinate_string.split(',')
-            # coordinate_list_int =[]
-            # for i in range(3):
-            #     coordinate_list_int[i]=int(coordinate_list[i])
-            #
-            # for room in self.rooms:
-            #     for player in self.rooms[room].players:
-            #         room.current.setNum(coordinate_list_int[0], coordinate_list_int[1], coordinate_list_int[2])
-            #         room.
+            coordinate_string2=coordinate_string.replace(","," ")
+            print(coordinate_string2)
+            #coordinate_string =','+coordinate_string
+            print(coordinate_string)
+            #coordinate_list = coordinate_string.split('')
+            # print(coordinate_string2.split()[0])
+            # print(coordinate_string2.split()[1])
+            # print(coordinate_string2.split()[2])
+            coordinate_list_int=[]
+            coordinate_list_int.append(int(coordinate_string2.split()[0]))
+            coordinate_list_int.append(int(coordinate_string2.split()[1]))
+            coordinate_list_int.append(int(coordinate_string2.split()[2]))
+            print(coordinate_list_int[0])
+            print(coordinate_list_int[1])
+            print(coordinate_list_int[2])
 
+            for room in self.rooms:
+                for player in self.rooms[room].players:
+                    self.rooms[room].gameObject.setNum(coordinate_list_int[0], coordinate_list_int[1], coordinate_list_int[2])
+                    self.rooms[room].broadcast_grid()
+                    print(len(self.rooms[room].players))
+                    print('previous was len')
+                    break
 
+        elif "refresh:" in msg:
+            for room in self.rooms:
+                for player in self.rooms[room].players:
+                    print('broadcasting now..')
+                    self.rooms[room].broadcast_grid()
 
 
         else:
@@ -168,8 +186,20 @@ class Room:
         for player in self.players:
             player.socket.sendall(msg.encode())
 
-    # def broadcast_grid(self):
-    #
+    def broadcast_grid(self):
+        i = 0
+        send_grid = ''
+        for row in self.grid:
+            for col in row:
+                send_grid = send_grid + ',' + str(col)
+                # c.send(str(col))
+                #print(i)
+                i += 1
+        msg = "grid: " + send_grid
+        print(msg)
+        # print(msg)
+        for player in self.players:
+            player.socket.sendall(msg)
 
     def broadcast(self, from_player, msg):
         msg = from_player.name.encode() + b":" + msg

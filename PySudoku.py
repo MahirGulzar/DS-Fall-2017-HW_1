@@ -155,9 +155,10 @@ import select, socket, sys
 from pychat_util import Room, Hall, Player
 import pychat_util
 import threading
+import time
 
 
-print("hi")
+#print("hi")
 
 READ_BUFFER = 4096
 '''
@@ -174,19 +175,86 @@ server_connection.connect(('127.0.0.1', pychat_util.PORT))
 def prompt():
     print('>', end=" ")
 
+def refresh_query():
+    print('doing refresh loop..')
+    time.sleep(1)
+    msg='refresh:'
+    try:
+        server_connection.sendall(msg.encode())
+        msg = server_connection.recv(READ_BUFFER)
+        self_grid = msg.replace("grid: ", "")
+        grid = []
+        li = []
+        string_grid = self_grid.split(',')
+        for element in string_grid:
+
+            # print(element.strip())
+            element = element.strip()
+            if (element.strip() == 'None'):
+                li.append(None)
+            elif (len(element.strip()) > 0):
+                li.append(int(element))
+                # li.append(1)
+
+            if (len(li) == 9):
+                grid.append(list(li))
+                li = []
+
+        #print(Client_Handler.MainGrid[0][8])
+        print(len(Client_Handler.theSquares))
+        # print(len(Client_Handler.MainGrid))
+        #Client_Handler.
+        for i in range(9):
+            for j in range(9):
+                # print("New = ",Client_Handler.MainGrid[i][j])
+                # print("Old = ",grid[i][j])
+                if(Client_Handler.MainGrid[i][j] is not grid[i][j]):
+                    print("Old = ",Client_Handler.MainGrid[i][j])
+                    print("New = ",grid[i][j])
+                    x= 9*(i)
+                    y= x+j
+                    Client_Handler.theSquares[y].change(grid[i][j])
+                    print('i  and j = ',i,j)
+                    print('location = %d'%y)
+                    print('number = ',grid[i][j])
+        Client_Handler.MainGrid = grid
+        #Client_Handler.Refresh_Display(Client_Handler.MainGrid)
+    except:
+        print('Exception raised..')
+    #Client_Handler.Refresh_Display()
+   #Client_Handler.current.set_Grid(grid)
+    print(Client_Handler.MainGrid)
+    #print ()
+    #print(Client_Handler.current)
+    #Client_Handler.Refresh_Display(Client_Handler.MainGrid)
+    # read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
+    # for s in read_sockets:
+    #     if s is server_connection: # incoming message
+    #         msg = s.recv(READ_BUFFER)
+    #         if'grid: ' in msg:
+    #            # print('incoming...')
+    #             #print(msg)
+    #             grid = msg.replace("grid: ", "")
+    #             #print(grid)
+
+    refresh_query()
+
+
 print ("Connected to server\n")
 msg_prefix = ''
 
 socket_list = [sys.stdin, server_connection]
+
 # names=[]
 # names.append('Mahir')
 # names.append('')
-name='Mahir'
+name='mahir2'
 while True:
     read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
     for s in read_sockets:
         if s is server_connection: # incoming message
             msg = s.recv(READ_BUFFER)
+            print(msg)
             if not msg:
                 print ("Server down!")
                 sys.exit(2)
@@ -207,17 +275,49 @@ while True:
                         server_connection.sendall(msg_prefix.encode())
                         continue
                         #msg_prefix = 'session:'  # identifier for new session
-                    elif 'welcomes' in msg.decode():
+                    elif 'welcomes' in msg.decode() and Client_Handler.inroom is False:
+                        print('WElcome...')
                         grid=msg.replace("welcomes: ", "")
                         handle = Client_Handler.Handler()
-                        handle.Initial_Reception(grid,name,s)
+
+                        #refreshloop.join()
+                        game = threading.Thread(target=handle.Initial_Reception, args=(grid,name,s))
+                        refreshloop = threading.Thread(target=refresh_query)
+                        game.start()
+                        refreshloop.start()
+                        game.join()
+                        #handle.Initial_Reception(grid,name,s)
+                        refreshloop.join()
                         #threading.Thread(target=handle.Initial_Reception,args=(grid,name))
+
+                        print('Coming after welcome..')
+                        Client_Handler.inroom=True
                     elif 'selection' in msg.decode():
+                        print('Selection...')
                         msg_prefix = 'session:'  # identifier for new session
+                        #Client_Handler.inroom = True
+                    elif 'grid: ' in msg:
+                        print('incoming...')
+                        print(msg)
+                        grid = msg.replace("grid: ", "")
+                        print(grid)
+                        # handle = Client_Handler.Handler()
+                        # Client_Handler.Refresh_Display(Client_Handler.current,grid)
+
                     else:
                         msg_prefix = ''
-                    prompt()
+
+                    if(Client_Handler.inroom is False):
+                        prompt()
 
         else:
-            msg = msg_prefix + sys.stdin.readline()
-            server_connection.sendall(msg.encode())
+            print(Client_Handler.inroom)
+            if(Client_Handler.inroom is False):
+
+                print('Waiting for client input... fuck..')
+                msg = msg_prefix + sys.stdin.readline()
+                server_connection.sendall(msg.encode())
+            # else:
+            #     print('Threading started....')
+            #     msg='refresh:'
+            #     threading.Thread(target=refresh_query,args=(msg))
