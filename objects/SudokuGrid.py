@@ -89,12 +89,13 @@ class SudokuGrid:
         Takes numToGen to place that number of elements 
         on the grid."""
         random.seed(theSeed)
-        
+        toproduce = 81-genAmount
         avail = []
         for num in range(0, 81):
             avail.append((num % 9) + 1)
 
-        while len(avail) > 40:
+        while len(avail) > 65:
+            #print(len(avail))
             location = int(random.random() * len(avail))
             numToPlace = avail[location]
             row = int(random.random() * 9)

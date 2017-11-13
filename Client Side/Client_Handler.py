@@ -5,7 +5,6 @@ import socket
 import select
 import Common
 import threading
-import Buffer_Handler
 
 
 current=None
@@ -81,36 +80,6 @@ class Handler:
 
 #------------------------------------------------------
 
-
-
-
-
-# def Refresh_Display():
-    # handle = Handler()
-    #
-    # theSquares = []
-    # initXLoc = 10
-    # initYLoc = 80
-    # startX, startY, editable, number = 0, 0, "N", 0
-    # for y in range(9):
-    #     for x in range(9):
-    #         if x in (0, 1, 2):  startX = (x * 41) + (initXLoc + 2)
-    #         if x in (3, 4, 5):  startX = (x * 41) + (initXLoc + 6)
-    #         if x in (6, 7, 8):  startX = (x * 41) + (initXLoc + 10)
-    #         if y in (0, 1, 2):  startY = (y * 41) + (initYLoc + 2)
-    #         if y in (3, 4, 5):  startY = (y * 41) + (initYLoc + 6)
-    #         if y in (6, 7, 8):  startY = (y * 41) + (initYLoc + 10)
-    #         number = handle.Update_Grid(MainGrid).getNum(y, x)
-    #         if number != None:
-    #             editable = "N"
-    #         else:
-    #             editable = "Y"
-    #         theSquares.append(SudokuSquare.SudokuSquare(number, startX, startY, editable, x, y))
-    #
-    # # for num in theSquares:
-    # #     num.draw()
-    #
-    # print(current.get_Grid())
 
 
 
@@ -193,9 +162,3 @@ def Start(grid,name,s):
         pygame.display.flip()
     print('After while..')
         # clock.tick(60)
-
-# def Establish_Connection(port,handle):
-#
-#     #s.connect((host, port))
-#     #s.bind()
-#     #handle.Initial_Reception(s)

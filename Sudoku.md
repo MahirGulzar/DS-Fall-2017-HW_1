@@ -1,6 +1,6 @@
 # how to run
-* python3 Schat_server.py host
-* Python3 Schat_client.py host
+* python2.7 Server Side/Game_Server.py host
+* Python2.7 PySudoku.py host
 
 TODO:
 Integration with the grid and game plus remembering the login

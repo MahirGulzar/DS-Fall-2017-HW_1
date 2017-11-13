@@ -16,6 +16,7 @@ import random
 from objects import SudokuSquare
 from objects import SudokuGrid
 from objects import GameResources
+import SudokuSolver as solver
 
 
 def getSudoku(puzzleNumber=None):
@@ -116,9 +117,9 @@ class Hall:
             # self.remove_player(player)
             coordinate_string = msg.replace("u:", "")
             coordinate_string2=coordinate_string.replace(","," ")
-            print(coordinate_string2)
+            #print(coordinate_string2)
             #coordinate_string =','+coordinate_string
-            print(coordinate_string)
+            #print(coordinate_string)
             #coordinate_list = coordinate_string.split('')
             # print(coordinate_string2.split()[0])
             # print(coordinate_string2.split()[1])
@@ -127,17 +128,17 @@ class Hall:
             coordinate_list_int.append(int(coordinate_string2.split()[0]))
             coordinate_list_int.append(int(coordinate_string2.split()[1]))
             coordinate_list_int.append(int(coordinate_string2.split()[2]))
-            print(coordinate_list_int[0])
-            print(coordinate_list_int[1])
-            print(coordinate_list_int[2])
+            # print(coordinate_list_int[0])
+            # print(coordinate_list_int[1])
+            # print(coordinate_list_int[2])
 
             for room in self.rooms:
                 for newplayer in self.rooms[room].players:
                     if(player is newplayer):
                         self.rooms[room].gameObject.setNum(coordinate_list_int[0], coordinate_list_int[1], coordinate_list_int[2])
                         self.rooms[room].broadcast_grid()
-                        print(len(self.rooms[room].players))
-                        print('previous was len')
+                        #print(len(self.rooms[room].players))
+                        #print('previous was len')
                         break
 
         elif "refresh:" in msg:
@@ -150,15 +151,16 @@ class Hall:
 
 
         else:
+            print("")
             # check if in a room or not first
-            if player.name in self.room_player_map:
-                self.rooms[self.room_player_map[player.name]].broadcast(player, msg.encode())
-            else:
-                msg = 'You are currently not in any room! \n' \
-                    + 'Use [<list>] to see available rooms! \n' \
-                    + 'Use [<join> room_name] to join a room! \n'
-                player.socket.sendall(msg.encode())
-    
+    #         if player.name in self.room_player_map:
+    #             self.rooms[self.room_player_map[player.name]].broadcast(player, msg.encode())
+    #         else:
+    #             msg = 'You are currently not in any room! \n' \
+    #                 + 'Use [<list>] to see available rooms! \n' \
+    #                 + 'Use [<join> room_name] to join a room! \n'
+    #             player.socket.sendall(msg.encode())
+    # Schat_client
     def remove_player(self, player):
         if player.name in self.room_player_map:
             self.rooms[self.room_player_map[player.name]].remove_player(player)
@@ -170,10 +172,53 @@ class Room:
     def __init__(self, name):
         self.players = [] # a list of sockets
         self.name = name
-
+        #puzzlenumber = int(random.random()*2000+1)
         initial,current,solution = getSudoku()
+
+
+
+        print("------------------< Room: %s SOLUTION >--------------------\n"%self.name)
+
+        #solution.printGrid()
         self.gameObject = current
         self.grid = current.get_Grid()
+        #self.solution = self.get_solution()
+
+    def get_solution(self):
+        list_grid=[]
+        for row in self.grid:
+            for col in row:
+                if(isinstance(col, (int, long))):
+                    list_grid.append(col)
+                else:
+                    list_grid.append('.')
+                #send_grid = send_grid + ',' + str(col)
+
+        print(list_grid)
+        if(solver.hasSolution(list_grid)):
+            solver.printGrid(list_grid,0)
+        else:
+            print 'NO SOLUTION'
+
+        grid = []
+        li = []
+        for element in list_grid:
+
+            # print(element.strip())
+            element = element.strip()
+            if (element.strip() == 'None'):
+                li.append(None)
+            elif (len(element.strip()) > 0):
+                li.append(int(element))
+                # li.append(1)
+
+            if (len(li) == 9):
+                grid.append(list(li))
+                li = []
+
+        print(grid)
+        return grid
+
 
     def welcome_new(self, from_player):
         i=0
@@ -182,7 +227,7 @@ class Room:
             for col in row:
                 send_grid=send_grid+','+str(col)
                 #c.send(str(col))
-                print(i)
+                #print(i)
                 i+=1
         msg = "welcomes: " + send_grid
         #print(msg)
@@ -199,7 +244,7 @@ class Room:
                 #print(i)
                 i += 1
         msg = "grid: " + send_grid
-        print(msg)
+        #print(msg)
         # print(msg)
         for player in self.players:
             player.socket.sendall(msg)
