@@ -94,7 +94,7 @@ class SudokuGrid:
         for num in range(0, 81):
             avail.append((num % 9) + 1)
 
-        while len(avail) > 65:
+        while len(avail) > 40:
             #print(len(avail))
             location = int(random.random() * len(avail))
             numToPlace = avail[location]

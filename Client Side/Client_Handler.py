@@ -1,12 +1,18 @@
-import SudokuSquare
-import SudokuGrid
-from GameResources import *
-import socket
-import select
-import Common
-import threading
+import SudokuSquare             # Must install pygame for this module to work (see Manual)
+import SudokuGrid               # Must install pygame for this module to work (see Manual)
+from GameResources import *     # Must install pygame for this module to work (see Manual)
+import sys
 
 
+'''
+The Client Handler script handles all the core client events
+i.e Game GUI, Grid updation and modification according to the
+data sent by the server. 
+'''
+
+
+
+"""Global Instances for game GUI and Grid matrix"""
 current=None
 inroom=False
 MainGrid=[]
@@ -19,14 +25,12 @@ background = background.convert()
 background.fill((255, 255, 255))
 board, boardRect = load_image("SudokuBg.png")
 boardRect = boardRect.move(10, 80)
-# s = socket.socket()
-# host = socket.gethostname()
 
 
 class Handler:
     """A class to handle server send and recieve data"""
 
-
+    """Update Grid of the Client Side at the start of the game.."""
     def Update_Grid(self, grid):
 
         global current
@@ -36,6 +40,7 @@ class Handler:
 
         return current
 
+    """Modify Grid of the Client Side at the start of the game when player joins the room.."""
     def Modify_Grid(self,yLoc, xLoc,event):
 
         global current
@@ -44,6 +49,7 @@ class Handler:
 
         return current
 
+    """Modify Grid of the Client Side if user changes the value of a cell.."""
     def Initial_Reception(self,self_grid,name,s):
 
         print(".....")
@@ -69,12 +75,12 @@ class Handler:
 
         Start(MainGrid,name,s)
 
+
+    """Send Key Update to the server side upon keydown even by user on client grid.."""
     def Send_Key_Update(self,x,y,number,s):
 
         coordinate='u:'+str(x)+','+str(y)+','+str(number)
         s.sendall(coordinate)
-        # grid = s.recv(1024)
-        # print(grid)
 
 
 
@@ -82,6 +88,7 @@ class Handler:
 
 
 
+"""Initialize the game GUI and Grid sent from the server..."""
 
 def Start(grid,name,s):
     global background
@@ -90,9 +97,7 @@ def Start(grid,name,s):
     global board
     global boardRect
     global theSquares
-    #global current
 
-    #current = SudokuSquare()
     handle = Handler()
 
     # theSquares = []
@@ -122,7 +127,6 @@ def Start(grid,name,s):
     # screen.blit(logo, logoRect)
     pygame.display.flip()
     pygame.display.set_caption(name)
-    # load_music("PySudokuTheme1.ogg")
 
     theNumbers = {pygame.K_0: "0", pygame.K_1: "1", pygame.K_2: "2",
                   pygame.K_3: "3", pygame.K_4: "4", pygame.K_5: "5",
@@ -130,12 +134,11 @@ def Start(grid,name,s):
                   pygame.K_9: "9", pygame.K_SPACE: "", pygame.K_BACKSPACE: "",
                   pygame.K_DELETE: ""}
 
-    print('Before while..')
+    '''
+    Continues Loop for Game Events from keyboards and handling
+    '''
     while 1:
-        # Refresh_Display(Client_Handler.current)
-        #Refresh_Display()
 
-        #pygame.display.flip()
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return 0
@@ -160,5 +163,5 @@ def Start(grid,name,s):
         for num in theSquares:
             num.draw()
         pygame.display.flip()
-    print('After while..')
-        # clock.tick(60)
+
+    exit(sys)

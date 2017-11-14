@@ -1,20 +1,9 @@
 from __future__ import print_function
-# Imports.....
 
-import sys, os, random, pygame  # Using 3rd Party pygame library
+import sys, os, random
+import pygame               # Must install pygame for this module to work (see Manual)
 sys.path.append(os.path.join("objects"))
-import SudokuSquare
-import SudokuGrid
 from GameResources import *
-import socket
-import Common
-from Client_Handler import Handler
-import Client_Handler
-
-#-----------------------------------------------------------------
-
-
-
 import Client_Handler
 import select, socket, sys
 from pychat_util import Room, Hall, Player
@@ -23,19 +12,21 @@ import threading
 import time
 
 
-#print("hi")
+#-----------------------------------------------------------------
+
+'''
+
+'''
+
+
 
 READ_BUFFER = 4096
 '''
-if len(sys.argv) < 2:
-    print("Usage: Python3 client.py [hostname]", file = sys.stderr)
-    sys.exit(1)
-else:
+
 '''
 score=0
 server_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-#server_connection.connect((sys.argv[1], pychat_util.PORT))
 server_connection.connect(('127.0.0.1', pychat_util.PORT))
 
 def prompt():
@@ -66,14 +57,9 @@ def refresh_query():
                 grid.append(list(li))
                 li = []
 
-        #print(Client_Handler.MainGrid[0][8])
-        #print(len(Client_Handler.theSquares))
-        # print(len(Client_Handler.MainGrid))
         #Client_Handler.
         for i in range(9):
             for j in range(9):
-                # print("New = ",Client_Handler.MainGrid[i][j])
-                # print("Old = ",grid[i][j])
                 if(Client_Handler.MainGrid[i][j] is not grid[i][j]):
                     print("Old = ",Client_Handler.MainGrid[i][j])
                     print("New = ",grid[i][j])
@@ -100,7 +86,7 @@ msg_prefix = ''
 
 socket_list = [sys.stdin, server_connection]
 
-name='mahir'
+name='prabs'
 while True:
     read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
     for s in read_sockets:
