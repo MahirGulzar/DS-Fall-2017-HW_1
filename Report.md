@@ -1,9 +1,9 @@
 # REPORT
 
 **Team:**
-Mahir gulzar: B79641
-Prabhant Singh: B79623
-Frozan Maqsoodi: B79640
+* Mahir gulzar: B79641
+* Prabhant Singh: B79623
+* Frozan Maqsoodi: B79640
 
 ### Prerequisites:
 1. Python2.7
