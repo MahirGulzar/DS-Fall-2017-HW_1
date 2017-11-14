@@ -1,12 +1,13 @@
 from __future__ import print_function
 
-import sys, os, random
+import sys, os
 import pygame               # Must install pygame for this module to work (see Manual)
 sys.path.append(os.path.join("objects"))
+sys.path.append(os.path.join("Server Side"))
+sys.path.append(os.path.join("Client Side"))
 from GameResources import *
 import Client_Handler
 import select, socket, sys
-from pychat_util import Room, Hall, Player
 import pychat_util
 import threading
 import time
