@@ -1,5 +1,6 @@
 import random
 
+
 class SudokuGrid:
     """A class to generate and check Sudoku data."""
     def __init__(self):
@@ -89,12 +90,13 @@ class SudokuGrid:
         Takes numToGen to place that number of elements 
         on the grid."""
         random.seed(theSeed)
-        
+        toproduce = 81-genAmount
         avail = []
         for num in range(0, 81):
             avail.append((num % 9) + 1)
 
         while len(avail) > 40:
+            #print(len(avail))
             location = int(random.random() * len(avail))
             numToPlace = avail[location]
             row = int(random.random() * 9)
@@ -127,42 +129,15 @@ class SudokuGrid:
         self.grid=grid
         
 
+# FOr testing Sudoku Functionality
+
 if __name__ == "__main__":
     print "Testing SudokuGrid functionality."
     print "Create an empty grid..."
     sampleGrid = SudokuGrid()
     sampleGrid.printGrid()
     
-    # print
-    # print "Compare an empty grid to another empty grid..."
-    # emptyGrid = SudokuGrid()
-    # print sampleGrid.checkSolution(emptyGrid)
 
-    # print
-    # print "Set three numbers in an empty grid..."
-    # sampleGrid.setNum(0, 0, 1)
-    # sampleGrid.setNum(0, 1, 2)
-    # sampleGrid.setNum(0, 2, 3)
-    # sampleGrid.setNum(0, 3, 1)
-    # sampleGrid.printGrid()
-    # print "Check row for ones...",
-    # print sampleGrid.checkRow(0, 1)
-    # print "Check row for nines...",
-    # print sampleGrid.checkRow(0, 4)
-    # sampleGrid.setNum(1, 0, 4)
-    # sampleGrid.setNum(2, 0, 5)
-    # sampleGrid.setNum(3, 0, 6)
-    # sampleGrid.printGrid()
-    # print "Check column for ones...",
-    # print sampleGrid.checkColumn(0, 1)
-    # print "Check column for nines...",
-    # print sampleGrid.checkColumn(0, 9)
-    # sampleGrid.setNum(2, 2, 1)
-    # sampleGrid.printGrid()
-    # print "Check square for ones...",
-    # print sampleGrid.checkSquare(0, 0, 1)
-    # print "Check square for nines...",
-    # print sampleGrid.checkSquare(0, 0, 9)
     
     print
     print "Attempting to create a full solution..."
@@ -171,8 +146,3 @@ if __name__ == "__main__":
     print
     print "DONE!"
     sampleGrid.printGrid()
-    
-    # print
-    # sampleGrid2 = SudokuGrid()
-    # sampleGrid2.createGrid(81, 10)
-    # sampleGrid2.printGrid()
