@@ -15,25 +15,31 @@ import time
 #-----------------------------------------------------------------
 
 '''
+Sudoku Client script handles the initial server connection 
+and resolves the protocols. When the client is assigned a room
+and a game this script runs two threads:
 
+1- For continous reception of Grid Updation from server
+2- Game Logic and GUI of Client Handler
 '''
 
 
 
 READ_BUFFER = 4096
-'''
-
-'''
 score=0
 server_connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 server_connection.connect(('127.0.0.1', pychat_util.PORT))
 
-def prompt():
-    print('>', end=" ")
+
+
+"""
+A recursive method running under reception thread
+to recive continous updated grid from server.
+"""
 
 def refresh_query():
-    print('doing refresh loop..')
+    #print('doing refresh loop..')
     time.sleep(1)
     msg='refresh:'
     try:
@@ -57,7 +63,6 @@ def refresh_query():
                 grid.append(list(li))
                 li = []
 
-        #Client_Handler.
         for i in range(9):
             for j in range(9):
                 if(Client_Handler.MainGrid[i][j] is not grid[i][j]):
@@ -70,29 +75,36 @@ def refresh_query():
                     print('location = %d'%y)
                     print('number = ',grid[i][j])
         Client_Handler.MainGrid = grid
-        #Client_Handler.Refresh_Display(Client_Handler.MainGrid)
     except:
-        print('Exception raised..')
-    #Client_Handler.Refresh_Display()
-   #Client_Handler.current.set_Grid(grid)
-    #print(Client_Handler.MainGrid)
+        print('')
 
 
     refresh_query()
 
 
+#------------------------------------------------------------------------------------------------------
+
+
+def prompt():
+    print('>', end=" ")
+
+
+
 print ("Connected to server\n")
-msg_prefix = ''
-
+msg_prefix = ''                                 # msg prefix is appended as signature term for server
 socket_list = [sys.stdin, server_connection]
+name='prabs2'
 
-name='prabs'
+
+"""
+Initial connection and protocol resolution from client side
+is handled in this loop
+"""
 while True:
     read_sockets, write_sockets, error_sockets = select.select(socket_list, [], [])
     for s in read_sockets:
         if s is server_connection: # incoming message
             msg = s.recv(READ_BUFFER)
-            #print(msg)
             if not msg:
                 print ("Server down!")
                 sys.exit(2)
@@ -103,42 +115,37 @@ while True:
                 else:
                     sys.stdout.write(msg.decode())
                     if 'Listing current rooms' in msg.decode():
-                        msg_prefix = 'name: '+name  # identifier for session list
+                        msg_prefix = 'name: '+name  # Send user name to server
                         server_connection.sendall(msg_prefix.encode())
                         continue
-                        # msg_prefix = 'session:'  # identifier for session list
 
                     elif 'Oops' in msg.decode():
-                        msg_prefix = 'name: ' + name  # identifier for session list
+                        msg_prefix = 'name: ' + name  # Send user name to server
                         server_connection.sendall(msg_prefix.encode())
                         continue
-                        #msg_prefix = 'session:'  # identifier for new session
-                    elif 'welcomes' in msg.decode() and Client_Handler.inroom is False:
-                        print('WElcome...')
-                        grid=msg.replace("welcomes: ", "")
-                        handle = Client_Handler.Handler()
 
-                        #refreshloop.join()
+                    elif 'welcomes' in msg.decode() and Client_Handler.inroom is False:
+                        #print('WElcome...')
+                        grid=msg.replace("welcomes: ", "")      # replace signature term with empty and
+                        handle = Client_Handler.Handler()       # Client Handler Handle class object
+
+                        # Threads to operate client's reception and game GUI
                         game = threading.Thread(target=handle.Initial_Reception, args=(grid,name,s))
                         refreshloop = threading.Thread(target=refresh_query)
                         game.start()
                         refreshloop.start()
                         game.join()
-                        #handle.Initial_Reception(grid,name,s)
                         refreshloop.join()
-                        #threading.Thread(target=handle.Initial_Reception,args=(grid,name))
 
-                        print('Coming after welcome..')
                         Client_Handler.inroom=True
+
                     elif 'selection' in msg.decode():
-                        #print('Selection...')
+
                         msg_prefix = 'session:'  # identifier for new session
-                        #Client_Handler.inroom = True
+
                     elif 'grid: ' in msg:
-                        #print('incoming...')
-                        #print(msg)
-                        grid = msg.replace("grid: ", "")
-                        #print(grid)
+
+                        grid = msg.replace("grid: ", "") # identifier for grid
 
                     else:
                         msg_prefix = ''
@@ -147,9 +154,9 @@ while True:
                         prompt()
 
         else:
-            print(Client_Handler.inroom)
+            #print(Client_Handler.inroom)
             if(Client_Handler.inroom is False):
 
-                print('Waiting for client input... fuck..')
+                #print('Waiting for client input...')
                 msg = msg_prefix + sys.stdin.readline()
                 server_connection.sendall(msg.encode())

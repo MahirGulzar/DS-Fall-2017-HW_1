@@ -1,4 +1,4 @@
-import os, pygame
+import os, pygame       # Must install pygame for this module to work (see Manual)
 
 def load_image(name):
     """Load images."""
