@@ -55,17 +55,8 @@ def openServer(player):
 
     global UserName
     UserName = player.get()
-    #execfile('/Server Side/Game_Server.py')
-    #execfile('GUI2.py')
-    #print player.get()
     UserName = player.get()
     print(UserName)
-
-    #Sudoku_Client.name = player.get()
-    #execfile('Sudoku_Client.py')
-
-
-    ####
 
 
 
@@ -75,16 +66,6 @@ def openServer(player):
 
     def create_window():
         window = tk.Toplevel()
-
-    server = ''
-    port = ''
-
-    # '''
-    # The openServer() function opens the server window.
-    # '''
-    #
-    # def openServer():
-    #     win.withdraw()
 
     def save1(sname, pname):
         global Inputs_Done
@@ -236,7 +217,6 @@ to recive continous updated grid from server.
 """
 
 def refresh_query():
-    #print('doing refresh loop..')
     time.sleep(1)
     msg='refresh:'
     try:
@@ -339,7 +319,7 @@ while True:
 
                         elif 'selection' in msg.decode():
 
-                            msg_prefix = 'session:'  # identifier for new session
+                            msg_prefix = 'session: '  # identifier for new session
 
                         elif 'grid: ' in msg:
 
