@@ -1,4 +1,3 @@
-print ("This is the server window")
 from Tkinter import *
 
 root = Tk()
@@ -27,7 +26,7 @@ root = Tk()
         # listbox1.bind("<ButtonRelease-1>",  add="+")
         # listbox1.bind("<ButtonRelease-1>",  add="+")
         #recipe_menu.add_command(label="Starters, Snacks and Savouries", command=starters_menu)
-
+print ("This is the server window")
 frame1 = Frame()
 frame1.pack()
 C = Canvas()
