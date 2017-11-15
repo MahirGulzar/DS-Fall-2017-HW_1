@@ -1,8 +1,10 @@
-import select, socket, sys, pdb
-from pychat_util import Hall, Room, Player
+import os
+import select
+import sys
+
+sys.path.append(os.path.join("objects"))
+from pychat_util import Hall, Player
 import pychat_util
-import future_builtins
-import future
 
 #--------------------------------------------------------------------------------------------------------
 
