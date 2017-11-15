@@ -141,7 +141,7 @@ def Start(grid,name,s):
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
-                return 0
+                pygame.quit()
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 return 0
             if event.type == pygame.MOUSEBUTTONDOWN:
